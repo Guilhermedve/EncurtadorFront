@@ -1,0 +1,109 @@
+*{ 
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #1c5a86;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* container geral */
+.container{ 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+}
+
+/* titulo */
+h1{
+    color: #F0D8B6;
+    text-shadow: rgb(0, 0, 0) 7px 3.1px 2px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* caixa do formulário */
+#form{ 
+    background-color: rgb(243, 243, 243);
+    width: 400px;
+    height: 300px;
+
+    border-radius: 50px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+}
+
+/* label */
+#label1{
+    font-weight: 700;
+    font-size: 25px;
+    
+    
+}
+
+/* input */
+#url{ 
+    border-radius: 30px;
+    padding: 13px 40px;
+    background-color:#b3926f27;
+    border: rgba(0, 0, 0, 0.918) 1px 1px 1px; 
+}
+
+/* botão */
+#butao{
+    background-color: rgba(19, 19, 19, 0.685);
+    font-weight: 800;
+    padding: 10px 25px;
+    border-radius: 20px;
+    border: none;
+    transition: 0.2s;
+    color: aliceblue;
+}
+
+/* hover botão */
+#butao:hover{
+    background-color: rgb(144, 248, 150);
+    cursor: pointer;
+    color: rgb(245, 238, 238);
+    padding-left: 50px;
+    padding-right: 50px;
+}
+#result{ 
+    width: 110px;
+    height: 20px;
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+    color: rgb(0, 0, 0);
+    padding: 15px;
+    border-radius: 30px;
+    transition: 1s;
+}
+#p{
+    transition: 4s;
+}
+#p.urlGerada{
+    position: relative;
+    padding: auto;
+    margin: auto;
+text-align: start;
+margin-bottom: 50px;
+}
+#result.urlGerada{ 
+    width: 200px;
+    height: 20px;
+    background-color: azure;
+    width: 200px;
+    height: 1px;
+    position: relative;
+}
