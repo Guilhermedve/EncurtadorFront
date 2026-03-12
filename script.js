@@ -6,7 +6,7 @@ form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const url = input.value;
 
-    fetch("http://localhost:8080/urls/shorten", {
+    fetch("https://encurtadorlinks-production.up.railway.app/urls/shorten", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
