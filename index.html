@@ -1,29 +1,552 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encurtador de URLs</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkCut - Encurtador de Links</title>
+  <meta name="description" content="Transforme seus links longos em URLs curtas e elegantes. Simples, rápido e gratuito.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --background: #f5f3ef;
+      --foreground: #2a2520;
+      --card: #faf9f7;
+      --primary: #2d5a5a;
+      --primary-hover: #234848;
+      --muted: #8a8580;
+      --border: #e5e2dc;
+      --accent: #3d7a7a;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--foreground);
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: var(--primary);
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover {
+      color: var(--foreground);
+    }
+
+    
+    .hero {
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 500;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--primary);
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.15rem;
+      max-width: 500px;
+      margin: 0 auto 3rem;
+    }
+
+   
+    .shortener-form {
+      display: flex;
+      gap: 0.75rem;
+      max-width: 600px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+
+    .shortener-form input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      font-size: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      color: var(--foreground);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-family: inherit;
+    }
+
+    .shortener-form input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(45, 90, 90, 0.1);
+    }
+
+    .shortener-form input::placeholder {
+      color: var(--muted);
+    }
+
+    .shortener-form button[type="submit"] {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+      font-family: inherit;
+    }
+
+    .shortener-form button[type="submit"]:hover {
+      background: var(--primary-hover);
+    }
+
+    .shortener-form button[type="submit"]:active {
+      transform: scale(0.98);
+    }
+
+    
+    .result {
+      display: none;
+      margin-top: 2rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--card);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .result.show {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-link {
+      color: var(--primary);
+      font-weight: 500;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .result-link:hover {
+      text-decoration: underline;
+    }
+
+    .copy-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .copy-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .copy-btn.copied {
+      background: #2d8a5a;
+    }
+
+    
+    .linkcopiado {
+      display: none;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: #2d8a5a;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .linkcopiado.appear {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    
+    .features {
+      padding: 5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+      border-color: var(--primary);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--background);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
+    }
+
+    .feature-card:hover .feature-icon {
+      background: var(--primary);
+      color: white;
+    }
+
+    .feature-card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    
+    .how-it-works {
+      padding: 5rem 2rem;
+      background: var(--card);
+    }
+
+    .how-it-works-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .how-it-works h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+
+    .step-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 600;
+      color: var(--primary);
+      line-height: 1;
+      min-width: 60px;
+    }
+
+    .step-content h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+      color: var(--muted);
+    }
+
+    
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      nav {
+        gap: 1.5rem;
+      }
+
+      .hero {
+        padding: 4rem 1.5rem 3rem;
+      }
+
+      .shortener-form {
+        flex-direction: column;
+      }
+
+      .shortener-form button[type="submit"] {
+        width: 100%;
+      }
+
+      .result.show {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .step {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Encurtador de URLs</h1>
-        <form id="form">
-            <div class="form-group">
-                <label id="label1" for="url">Insira a URL original</label>
-                <input type="text" id="url" 
-                required placeholder="https://exemplo.com">
-            </div>
-            <button id="butao" type="submit" >Encurtar</button>
-        </form>
+  <header>
+    <a href="#" class="logo">Link<span>Cut</span></a>
+    <nav>
+      <a href="#features">Recursos</a>
+      <a href="#how-it-works">Como Funciona</a>
+      <a href="#contact">Contato</a>
+    </nav>
+  </header>
 
+  <main>
+    <section class="hero">
+      <h1>Encurte seus links com <em>elegância</em></h1>
+      <p>Transforme URLs longas e confusas em links curtos, memoráveis e fáceis de compartilhar.</p>
 
-        <div id="resultado">
-            <p id="p">URL encurtada: <strong id="shortUrl"></strong></p>
+      <form class="shortener-form" id="form">
+        <div class="input-wrapper">
+          <input
+            type="url"
+            id="url"
+            placeholder="Cole seu link aqui..."
+            required
+          >
         </div>
-    </div>
+        <button type="submit">Encurtar</button>
+      </form>
 
-    <script src="script.js"></script>
+      
+      <div class="result" id="result">
+        
+        <a href="#" class="result-link" id="linkareaclick" target="_blank"></a>
+        
+        <button class="copy-btn" id="copy">Copiar</button>
+      </div>
+
+      
+      <p class="linkcopiado" id="linkcopiado"></p>
+    </section>
+
+    <section class="features" id="features">
+      <h2>Por que escolher o LinkCut?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3>Rápido e Simples</h3>
+          <p>Encurte seus links em segundos, sem necessidade de cadastro ou complicações.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>Seguro e Confiável</h3>
+          <p>Seus links são protegidos e sempre disponíveis quando você precisar deles.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h3>Estatísticas</h3>
+          <p>Acompanhe o desempenho dos seus links com métricas detalhadas de cliques.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+      <div class="how-it-works-inner">
+        <h2>Como Funciona</h2>
+        <div class="steps">
+          <div class="step">
+            <span class="step-number">01</span>
+            <div class="step-content">
+              <h3>Cole seu link</h3>
+              <p>Insira a URL longa que deseja encurtar no campo acima.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">02</span>
+            <div class="step-content">
+              <h3>Clique em Encurtar</h3>
+              <p>Nosso sistema gera instantaneamente uma URL curta e única para você.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">03</span>
+            <div class="step-content">
+              <h3>Compartilhe</h3>
+              <p>Copie e compartilhe seu novo link em qualquer lugar.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <p>Feito com cuidado por <a href="#">LinkCut</a>. Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+    const form = document.getElementById("form");
+    const input = document.getElementById("url");
+    const copy = document.getElementById("copy");
+    let resultadoCopy;
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      fetch("https://encurtadorlinks-production.up.railway.app/urls/shorten", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ originalUrl: input.value })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const linkEl = document.getElementById("linkareaclick");
+        linkEl.setAttribute("href", data.shortUrl);
+        linkEl.innerText = data.shortUrl;
+        resultadoCopy = data.shortUrl;
+
+        document.getElementById("result").classList.add("show");
+
+        
+        const avisoEl = document.getElementById("linkcopiado");
+        avisoEl.classList.remove("appear");
+        avisoEl.textContent = "";
+      })
+      .catch(error => {
+        console.error("Erro:", error);
+      });
+    });
+
+    copy.addEventListener("click", (e) => {
+      e.preventDefault();
+      navigator.clipboard.writeText(resultadoCopy)
+        .then(() => {
+          const avisoEl = document.getElementById("linkcopiado");
+          avisoEl.textContent = "Link Copiado 😎";
+          avisoEl.classList.add("appear");
+        })
+        .catch(err => {
+          console.error('Erro ao copiar o texto:', err);
+        });
+    });
+  </script>
 </body>
 </html>
